@@ -27,12 +27,10 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         export_format = req.params.get("format", "csv").lower()
 
         filters = {
+            "participantId": req.params.get("participantId"),
             "questionId": req.params.get("questionId"),
-            "inputMethod": req.params.get("inputMethod"),
-            "processed": req.params.get("processed"),
             "startDate": req.params.get("startDate"),
             "endDate": req.params.get("endDate"),
-            "submissionId": req.params.get("submissionId"),
             "search": req.params.get("search"),
         }
 

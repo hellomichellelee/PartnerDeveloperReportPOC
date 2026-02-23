@@ -80,7 +80,10 @@ def build_where_clause(filters: dict) -> tuple[str, list]:
     for key, value in filters.items():
         if value is None or value == "":
             continue
-        if key == "search":
+        if key == "participantId":
+            conditions.append("participant_id = %s")
+            params.append(value)
+        elif key == "search":
             conditions.append("response_text LIKE %s")
             params.append(f"%{value}%")
         elif key == "name_search":

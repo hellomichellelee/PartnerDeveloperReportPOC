@@ -12,7 +12,6 @@ import {
   DialogActions,
   Button,
   Text,
-  Badge,
 } from "@fluentui/react-components";
 import { Dismiss24Regular } from "@fluentui/react-icons";
 import { DataTable } from "./DataTable";
@@ -86,30 +85,6 @@ export const ResponsesTab: FC = () => {
         maxWidth: "400px",
       },
       {
-        key: "input_method",
-        label: "Input",
-        sortable: true,
-        minWidth: "70px",
-        maxWidth: "90px",
-        render: (val) => (
-          <Badge
-            appearance="filled"
-            color={val === "voice" ? "informative" : "subtle"}
-            size="small"
-          >
-            {String(val)}
-          </Badge>
-        ),
-      },
-      {
-        key: "processed",
-        label: "Processed",
-        sortable: true,
-        minWidth: "80px",
-        maxWidth: "100px",
-        render: (val) => (Number(val) === 1 ? "Yes" : "No"),
-      },
-      {
         key: "created_at",
         label: "Created",
         sortable: true,
@@ -135,16 +110,9 @@ export const ResponsesTab: FC = () => {
     [filters, setFilters]
   );
 
-  const handleInputMethodFilter = useCallback(
+  const handleParticipantFilter = useCallback(
     (_e: unknown, data: { value: string }) => {
-      setFilters({ ...filters, inputMethod: data.value || undefined });
-    },
-    [filters, setFilters]
-  );
-
-  const handleProcessedFilter = useCallback(
-    (_e: unknown, data: { value: string }) => {
-      setFilters({ ...filters, processed: data.value || undefined });
+      setFilters({ ...filters, participantId: data.value || undefined });
     },
     [filters, setFilters]
   );
@@ -171,21 +139,19 @@ export const ResponsesTab: FC = () => {
           </Select>
           <Select
             size="medium"
-            value={filters.inputMethod || ""}
-            onChange={handleInputMethodFilter}
+            value={filters.participantId || ""}
+            onChange={handleParticipantFilter}
           >
-            <option value="">All Input</option>
-            <option value="voice">Voice</option>
-            <option value="text">Text</option>
-          </Select>
-          <Select
-            size="medium"
-            value={filters.processed || ""}
-            onChange={handleProcessedFilter}
-          >
-            <option value="">All Status</option>
-            <option value="true">Processed</option>
-            <option value="false">Unprocessed</option>
+            <option value="">All Participants</option>
+            {Array.from(
+              new Set(data.map((r) => r.participant_id).filter((id): id is number => id != null))
+            )
+              .sort((a, b) => a - b)
+              .map((id) => (
+                <option key={id} value={String(id)}>
+                  {id}
+                </option>
+              ))}
           </Select>
           <ExportButton
             onExportCsv={() => triggerExport(getResponsesExportUrl(filters, "csv"))}

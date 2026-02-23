@@ -59,12 +59,10 @@ export interface Question {
 // ─── Filter Types ───
 
 export interface ResponseFilters {
+  participantId?: string;
   questionId?: string;
-  inputMethod?: string;
-  processed?: string;
   startDate?: string;
   endDate?: string;
-  submissionId?: string;
   search?: string;
 }
 
