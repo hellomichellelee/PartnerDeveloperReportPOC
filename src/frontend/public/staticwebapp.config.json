@@ -12,21 +12,18 @@
       "allowedRoles": ["authenticated"]
     },
     {
+      "route": "/assets/*",
+      "allowedRoles": ["anonymous", "authenticated"]
+    },
+    {
+      "route": "/index.html",
+      "allowedRoles": ["authenticated"]
+    },
+    {
       "route": "/*",
       "allowedRoles": ["authenticated"]
     }
   ],
-  "auth": {
-    "identityProviders": {
-      "azureActiveDirectory": {
-        "registration": {
-          "openIdIssuer": "https://login.microsoftonline.com/{TENANT_ID}/v2.0",
-          "clientIdSettingName": "AAD_CLIENT_ID",
-          "clientSecretSettingName": "AAD_CLIENT_SECRET"
-        }
-      }
-    }
-  },
   "responseOverrides": {
     "401": {
       "statusCode": 302,
