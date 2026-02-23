@@ -10,7 +10,7 @@ An internal reporting dashboard for viewing survey data collected by the [Partne
 - **Filter & search**: Full-text search, column filters, date range pickers
 - **Sort & paginate**: Sortable columns with configurable page sizes
 - **Export**: Download filtered data as CSV or Excel
-- **Authentication**: Microsoft Entra ID via SWA built-in auth
+- **Access control**: Password-protected entry screen
 
 ## Architecture
 

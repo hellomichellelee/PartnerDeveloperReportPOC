@@ -30,7 +30,7 @@ resource sqlServer 'Microsoft.Sql/servers@2023-08-01-preview' existing = {
   name: sqlServerName
 }
 
-// ─── Azure Static Web App (Standard tier for Entra ID auth) ───
+// ─── Azure Static Web App ───
 resource staticWebApp 'Microsoft.Web/staticSites@2023-12-01' = {
   name: reportAppName
   location: location

@@ -14,6 +14,7 @@ import {
 } from "@fluentui/react-icons";
 import { lightTheme } from "./theme";
 import { Header, ResponsesTab, ParticipantsTab, QuestionsTab } from "./components";
+import { PasswordGate, isSessionAuthenticated } from "./components/PasswordGate";
 
 const useStyles = makeStyles({
   app: {
@@ -47,6 +48,7 @@ type TabId = "responses" | "participants" | "questions";
 
 const App: FC = () => {
   const styles = useStyles();
+  const [authenticated, setAuthenticated] = useState(isSessionAuthenticated());
   const [activeTab, setActiveTab] = useState<TabId>("responses");
   const [responseSubmissionFilter, setResponseSubmissionFilter] = useState<
     string | undefined
@@ -85,6 +87,9 @@ const App: FC = () => {
 
   return (
     <FluentProvider theme={lightTheme}>
+      {!authenticated ? (
+        <PasswordGate onAuthenticated={() => setAuthenticated(true)} />
+      ) : (
       <div className={styles.app}>
         <Header />
         <div className={styles.content}>
@@ -131,6 +136,7 @@ const App: FC = () => {
           </div>
         </div>
       </div>
+      )}
     </FluentProvider>
   );
 };

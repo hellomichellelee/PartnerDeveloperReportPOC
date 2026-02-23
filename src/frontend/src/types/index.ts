@@ -96,14 +96,4 @@ export interface ColumnDef<T> {
   render?: (value: T[keyof T], row: T) => ReactNode;
 }
 
-// ─── Auth ───
 
-export interface UserInfo {
-  clientPrincipal: {
-    identityProvider: string;
-    userId: string;
-    userDetails: string;
-    userRoles: string[];
-    claims: Array<{ typ: string; val: string }>;
-  } | null;
-}

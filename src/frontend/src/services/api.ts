@@ -11,7 +11,6 @@ import type {
   ParticipantFilters,
   QuestionFilters,
   SortState,
-  UserInfo,
 } from "../types";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api";
@@ -99,16 +98,6 @@ export async function getQuestions(
 export function getQuestionsExportUrl(filters: QuestionFilters, format: "csv" | "xlsx"): string {
   const qs = buildQueryString({ ...filters, format });
   return `${API_BASE}/questions/export${qs}`;
-}
-
-// ─── Auth ───
-
-export async function getUserInfo(): Promise<UserInfo> {
-  try {
-    return await fetchJson("/.auth/me");
-  } catch {
-    return { clientPrincipal: null };
-  }
 }
 
 // ─── Health ───

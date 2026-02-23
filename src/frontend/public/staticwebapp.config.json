@@ -8,28 +8,10 @@
   },
   "routes": [
     {
-      "route": "/api/*",
-      "allowedRoles": ["authenticated"]
-    },
-    {
-      "route": "/assets/*",
-      "allowedRoles": ["anonymous", "authenticated"]
-    },
-    {
-      "route": "/index.html",
-      "allowedRoles": ["authenticated"]
-    },
-    {
       "route": "/*",
-      "allowedRoles": ["authenticated"]
+      "allowedRoles": ["anonymous"]
     }
   ],
-  "responseOverrides": {
-    "401": {
-      "statusCode": 302,
-      "redirect": "/.auth/login/aad"
-    }
-  },
   "globalHeaders": {
     "X-Content-Type-Options": "nosniff",
     "X-Frame-Options": "DENY",

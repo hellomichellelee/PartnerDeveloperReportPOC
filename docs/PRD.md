@@ -4,7 +4,7 @@
 
 **Partner Developer Report** is an internal-facing Azure Static Web App that provides a tabular reporting interface for survey data collected by the companion **Partner Developer Survey** app. It connects to the same Azure SQL Database (`sqldb-responses`) and surfaces raw survey data across three tab-based views — Responses, Participants, and Questions — with filtering, search, and export capabilities.
 
-The app is designed for **internal team members and product managers** who need to review, filter, and export survey feedback. It uses Microsoft Entra ID authentication to restrict access to authorized personnel only.
+The app is designed for **internal team members and product managers** who need to review, filter, and export survey feedback. Access is protected by a simple password gate — the app URL is not publicly advertised.
 
 **Phase 1** focuses on surfacing the three existing raw data tables. **Future phases** will add views for processed/analyzed data (e.g., sentiment analysis, topic extraction) as those tables are added to the database.
 
@@ -15,14 +15,14 @@ The app is designed for **internal team members and product managers** who need 
 ```
 [ React SPA (Fluent UI v9) ]  →  [ Python Azure Functions (SWA-managed) ]  →  [ Azure SQL Database ]
          ↑                                                                          ↑
-   Entra ID Auth                                                              Shared with
-   (SWA built-in)                                                          Partner_Developer_Survey
+   Password Gate                                                              Shared with
+   (client-side)                                                          Partner_Developer_Survey
 ```
 
 - **Frontend**: React 18 + TypeScript + Fluent UI v9 + Vite
 - **API**: Python Azure Functions, managed by the Static Web App
 - **Database**: Existing Azure SQL Database — **read-only access** from this app
-- **Auth**: Microsoft Entra ID via Azure SWA built-in authentication
+- **Auth**: Client-side password gate (session-based)
 - **Infrastructure**: Deploys to the same resource group (`rg-rfpsurvey-dev`), reuses the existing SQL server
 
 ---
@@ -87,7 +87,8 @@ Processed/analyzed data tables (sentiment scores, topic clusters, keywords) will
 ## 4. User Interface
 
 ### 4.1 Layout
-- **Header**: App title, user identity (Entra ID), sign-out
+- **Password Gate**: Simple password entry screen before accessing the app
+- **Header**: App title
 - **Tab Navigation**: Responses, Participants, Questions
 - **Content Area**: Data table with toolbar (search, filters, export)
 
@@ -128,16 +129,17 @@ Processed/analyzed data tables (sentiment scores, topic clusters, keywords) will
 
 ## 6. Authentication
 
-- Microsoft Entra ID via SWA built-in auth
-- Standard SWA tier required
-- All routes require `authenticated` role
+- Client-side password gate with a shared access password
+- Password checked in the browser; valid session stored in `sessionStorage`
+- Session lasts until the browser tab is closed
+- The URL is not publicly advertised as an additional layer of obscurity
 
 ---
 
 ## 7. Phases
 
 ### Phase 1 — Core Reporting (MVP)
-Raw data tables, filtering, search, sort, export, Entra ID auth.
+Raw data tables, filtering, search, sort, export, password gate.
 
 ### Phase 2 — Processed Data Views
 Sentiment analysis, topic clusters, summary dashboards, charts.
