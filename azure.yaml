@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Azure/azure-dev/main/schemas/v1.0/azure.yaml.json
+
+name: partner-developer-report
+metadata:
+  template: partner-developer-report
+services:
+  web:
+    project: ./src/frontend
+    dist: dist
+    language: js
+    host: staticwebapp
+    hooks:
+      prepackage:
+        shell: sh
+        run: npm install && npm run build
+  api:
+    project: ./src/api
+    language: python
+    host: staticwebapp
