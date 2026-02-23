@@ -21,6 +21,7 @@ export interface Pagination {
 export interface SurveyResponse {
   [key: string]: unknown;
   id: number;
+  participant_id: number | null;
   submission_id: string;
   question_id: string;
   question_text: string;

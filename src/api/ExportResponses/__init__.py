@@ -17,7 +17,7 @@ from shared.database import (
 logger = logging.getLogger(__name__)
 
 COLUMNS = [
-    "id", "submission_id", "question_id", "question_text",
+    "participant_id", "question_id", "question_text",
     "response_text", "input_method", "processed", "created_at", "updated_at",
 ]
 
@@ -39,7 +39,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         where_clause, params = build_where_clause(filters)
 
         query = f"""
-            SELECT id, submission_id, question_id, question_text, response_text,
+            SELECT participant_id, question_id, question_text, response_text,
                    input_method, processed, created_at, updated_at
             FROM dbo.responses
             WHERE {where_clause}

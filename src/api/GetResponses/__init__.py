@@ -17,7 +17,7 @@ from shared.database import (
 logger = logging.getLogger(__name__)
 
 ALLOWED_SORT_COLUMNS = {
-    "id", "submission_id", "question_id", "input_method",
+    "id", "participant_id", "submission_id", "question_id", "input_method",
     "processed", "created_at", "updated_at",
 }
 
@@ -58,7 +58,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         # Fetch page
         offset = (page - 1) * page_size
         data_query = f"""
-            SELECT id, submission_id, question_id, question_text, response_text,
+            SELECT id, participant_id, submission_id, question_id, question_text, response_text,
                    input_method, processed, created_at, updated_at
             FROM dbo.responses
             WHERE {where_clause}
