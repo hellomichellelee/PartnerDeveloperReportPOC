@@ -35,8 +35,8 @@ resource staticWebApp 'Microsoft.Web/staticSites@2023-12-01' = {
   name: reportAppName
   location: location
   sku: {
-    name: 'Standard'
-    tier: 'Standard'
+    name: 'Free'
+    tier: 'Free'
   }
   properties: {
     stagingEnvironmentPolicy: 'Enabled'
