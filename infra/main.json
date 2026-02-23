@@ -1,0 +1,118 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "_generator": {
+      "name": "bicep",
+      "version": "0.40.2.10011",
+      "templateHash": "11725265912073300349"
+    }
+  },
+  "parameters": {
+    "environmentName": {
+      "type": "string",
+      "defaultValue": "dev",
+      "metadata": {
+        "description": "Environment name (dev, staging, prod)"
+      }
+    },
+    "baseName": {
+      "type": "string",
+      "defaultValue": "rfpsurvey",
+      "metadata": {
+        "description": "Base name for resources"
+      }
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Azure region for resources"
+      }
+    },
+    "sqlServerName": {
+      "type": "string",
+      "metadata": {
+        "description": "Existing SQL Server name to reuse"
+      }
+    },
+    "sqlDatabaseName": {
+      "type": "string",
+      "metadata": {
+        "description": "Existing SQL Database name"
+      }
+    },
+    "sqlAdminLogin": {
+      "type": "securestring",
+      "metadata": {
+        "description": "SQL admin username"
+      }
+    },
+    "sqlAdminPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "SQL admin password"
+      }
+    }
+  },
+  "variables": {
+    "reportAppName": "[format('swa-{0}-report-{1}', parameters('baseName'), parameters('environmentName'))]",
+    "sqlConnectionString": "[format('Server=tcp:{0}{1},1433;Database={2};User ID={3};Password={4};Encrypt=true;TrustServerCertificate=false;Connection Timeout=30;', parameters('sqlServerName'), environment().suffixes.sqlServerHostname, parameters('sqlDatabaseName'), parameters('sqlAdminLogin'), parameters('sqlAdminPassword'))]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Web/staticSites",
+      "apiVersion": "2023-12-01",
+      "name": "[variables('reportAppName')]",
+      "location": "[parameters('location')]",
+      "sku": {
+        "name": "Free",
+        "tier": "Free"
+      },
+      "properties": {
+        "stagingEnvironmentPolicy": "Enabled",
+        "allowConfigFileUpdates": true,
+        "buildProperties": {
+          "appLocation": "src/frontend",
+          "apiLocation": "src/api",
+          "outputLocation": "dist",
+          "appBuildCommand": "npm run build"
+        }
+      },
+      "tags": {
+        "environment": "[parameters('environmentName')]",
+        "project": "partner-developer-report",
+        "azd-service-name": "web"
+      }
+    },
+    {
+      "type": "Microsoft.Web/staticSites/config",
+      "apiVersion": "2023-12-01",
+      "name": "[format('{0}/{1}', variables('reportAppName'), 'appsettings')]",
+      "properties": {
+        "AZURE_SQL_CONNECTION_STRING": "[variables('sqlConnectionString')]"
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/staticSites', variables('reportAppName'))]"
+      ]
+    }
+  ],
+  "outputs": {
+    "staticWebAppName": {
+      "type": "string",
+      "value": "[variables('reportAppName')]"
+    },
+    "staticWebAppUrl": {
+      "type": "string",
+      "value": "[format('https://{0}', reference(resourceId('Microsoft.Web/staticSites', variables('reportAppName')), '2023-12-01').defaultHostname)]"
+    },
+    "sqlServerName": {
+      "type": "string",
+      "value": "[parameters('sqlServerName')]"
+    },
+    "sqlDatabaseName": {
+      "type": "string",
+      "value": "[parameters('sqlDatabaseName')]"
+    }
+  }
+}

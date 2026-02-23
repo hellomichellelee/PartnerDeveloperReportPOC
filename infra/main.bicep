@@ -23,7 +23,7 @@ param sqlAdminPassword string
 
 // ─── Variables ───
 var reportAppName = 'swa-${baseName}-report-${environmentName}'
-var sqlConnectionString = 'Server=tcp:${sqlServerName}.database.windows.net,1433;Database=${sqlDatabaseName};User ID=${sqlAdminLogin};Password=${sqlAdminPassword};Encrypt=true;TrustServerCertificate=false;Connection Timeout=30;'
+var sqlConnectionString = 'Server=tcp:${sqlServerName}${environment().suffixes.sqlServerHostname},1433;Database=${sqlDatabaseName};User ID=${sqlAdminLogin};Password=${sqlAdminPassword};Encrypt=true;TrustServerCertificate=false;Connection Timeout=30;'
 
 // ─── Reference Existing SQL Server ───
 resource sqlServer 'Microsoft.Sql/servers@2023-08-01-preview' existing = {
