@@ -48,20 +48,22 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             "search": req.params.get("search"),
         }
 
-        where_clause, params = build_where_clause(filters)
+        where_clause, params = build_where_clause(filters, table_alias="r")
 
         # Count total records
-        count_query = f"SELECT COUNT(*) FROM dbo.responses WHERE {where_clause}"
+        count_query = f"SELECT COUNT(*) FROM dbo.responses r WHERE {where_clause}"
         total_records = execute_count(count_query, tuple(params))
 
         # Fetch page
         offset = (page - 1) * page_size
         data_query = f"""
-            SELECT id, participant_id, submission_id, topic, question_id, question_text, response_text,
-                   input_method, processed, created_at, updated_at
-            FROM dbo.responses
+            SELECT r.id, COALESCE(r.participant_id, p.id) AS participant_id,
+                   r.submission_id, r.topic, r.question_id, r.question_text, r.response_text,
+                   r.input_method, r.processed, r.created_at, r.updated_at
+            FROM dbo.responses r
+            LEFT JOIN dbo.participants p ON r.submission_id = p.submission_id
             WHERE {where_clause}
-            ORDER BY {sort_by} {sort_order}
+            ORDER BY r.{sort_by} {sort_order}
             OFFSET %s ROWS FETCH NEXT %s ROWS ONLY
         """
         data_params = tuple(params) + (offset, page_size)

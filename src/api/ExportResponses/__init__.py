@@ -35,14 +35,16 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             "search": req.params.get("search"),
         }
 
-        where_clause, params = build_where_clause(filters)
+        where_clause, params = build_where_clause(filters, table_alias="r")
 
         query = f"""
-            SELECT participant_id, topic, question_id, question_text, response_text,
-                   input_method, processed, created_at, updated_at
-            FROM dbo.responses
+            SELECT COALESCE(r.participant_id, p.id) AS participant_id,
+                   r.topic, r.question_id, r.question_text, r.response_text,
+                   r.input_method, r.processed, r.created_at, r.updated_at
+            FROM dbo.responses r
+            LEFT JOIN dbo.participants p ON r.submission_id = p.submission_id
             WHERE {where_clause}
-            ORDER BY created_at DESC
+            ORDER BY r.created_at DESC
         """
         rows = execute_query(query, tuple(params) if params else None)
         serialized = [serialize_row(r) for r in rows]

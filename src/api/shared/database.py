@@ -69,11 +69,12 @@ def execute_count(query: str, params: tuple = None) -> int:
         conn.close()
 
 
-def build_where_clause(filters: dict) -> tuple[str, list]:
+def build_where_clause(filters: dict, table_alias: str = "") -> tuple[str, list]:
     """
     Build a SQL WHERE clause from a dict of filter conditions.
     Returns (where_clause_string, params_list).
     """
+    prefix = f"{table_alias}." if table_alias else ""
     conditions = []
     params = []
 
@@ -81,42 +82,42 @@ def build_where_clause(filters: dict) -> tuple[str, list]:
         if value is None or value == "":
             continue
         if key == "participantId":
-            conditions.append("participant_id = %s")
+            conditions.append(f"{prefix}participant_id = %s")
             params.append(value)
         elif key == "search":
-            conditions.append("response_text LIKE %s")
+            conditions.append(f"{prefix}response_text LIKE %s")
             params.append(f"%{value}%")
         elif key == "name_search":
             conditions.append(
-                "(first_name LIKE %s OR last_name LIKE %s OR email LIKE %s)"
+                f"({prefix}first_name LIKE %s OR {prefix}last_name LIKE %s OR {prefix}email LIKE %s)"
             )
             params.extend([f"%{value}%", f"%{value}%", f"%{value}%"])
         elif key == "question_search":
-            conditions.append("question_text LIKE %s")
+            conditions.append(f"{prefix}question_text LIKE %s")
             params.append(f"%{value}%")
         elif key == "startDate":
-            conditions.append("created_at >= %s")
+            conditions.append(f"{prefix}created_at >= %s")
             params.append(value)
         elif key == "endDate":
-            conditions.append("created_at <= %s")
+            conditions.append(f"{prefix}created_at <= %s")
             params.append(value)
         elif key == "questionId":
-            conditions.append("question_id = %s")
+            conditions.append(f"{prefix}question_id = %s")
             params.append(value)
         elif key == "inputMethod":
-            conditions.append("input_method = %s")
+            conditions.append(f"{prefix}input_method = %s")
             params.append(value)
         elif key == "processed":
-            conditions.append("processed = %s")
+            conditions.append(f"{prefix}processed = %s")
             params.append(1 if value.lower() in ("true", "1", "yes") else 0)
         elif key == "submissionId":
-            conditions.append("submission_id = %s")
+            conditions.append(f"{prefix}submission_id = %s")
             params.append(value)
         elif key == "isActive":
-            conditions.append("is_active = %s")
+            conditions.append(f"{prefix}is_active = %s")
             params.append(1 if value.lower() in ("true", "1", "yes") else 0)
         elif key == "topic":
-            conditions.append("topic = %s")
+            conditions.append(f"{prefix}topic = %s")
             params.append(value)
 
     where_str = " AND ".join(conditions) if conditions else "1=1"
