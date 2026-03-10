@@ -13,7 +13,7 @@ import {
 } from "@fluentui/react-components";
 import {
   LockClosed20Regular,
-  DataBarVertical20Regular,
+  DataBarVertical24Regular,
 } from "@fluentui/react-icons";
 
 const PASSCODE = "SurveyReport2026!";
@@ -77,7 +77,7 @@ export const PasswordGate: FC<{ onAuthenticated: () => void }> = ({
         <CardHeader
           header={
             <div className={styles.brandHeader}>
-              <DataBarVertical20Regular />
+              <DataBarVertical24Regular />
               <Text size={500} weight="semibold">
                 Partner Developer Report
               </Text>

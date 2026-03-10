@@ -73,6 +73,7 @@ export const QuestionsTab: FC<QuestionsTabProps> = ({
     () => [
       { key: "id", label: "ID", sortable: true, minWidth: "60px", maxWidth: "80px" },
       { key: "question_id", label: "Question ID", sortable: true, minWidth: "100px", maxWidth: "120px" },
+      { key: "topic", label: "Topic", sortable: true, minWidth: "100px", maxWidth: "140px" },
       { key: "question_text", label: "Question Text", sortable: false, minWidth: "300px" },
       { key: "question_order", label: "Order", sortable: true, minWidth: "70px", maxWidth: "90px" },
       {
@@ -117,6 +118,13 @@ export const QuestionsTab: FC<QuestionsTabProps> = ({
     [filters, setFilters]
   );
 
+  const handleTopicFilter = useCallback(
+    (_e: unknown, data: { value: string }) => {
+      setFilters({ ...filters, topic: data.value || undefined });
+    },
+    [filters, setFilters]
+  );
+
   const handleRowClick = useCallback(
     (row: Question) => {
       if (onViewResponses) {
@@ -134,6 +142,20 @@ export const QuestionsTab: FC<QuestionsTabProps> = ({
         onRefresh={refresh}
       >
         <div className={styles.filterRow}>
+          <Select
+            size="medium"
+            value={filters.topic || ""}
+            onChange={handleTopicFilter}
+          >
+            <option value="">All Topics</option>
+            <option value="Context">Context</option>
+            <option value="Onboarding">Onboarding</option>
+            <option value="Development">Development</option>
+            <option value="Integration">Integration</option>
+            <option value="Testing">Testing</option>
+            <option value="Publishing">Publishing</option>
+            <option value="Wrap-Up">Wrap-Up</option>
+          </Select>
           <Select
             size="medium"
             value={filters.isActive || ""}

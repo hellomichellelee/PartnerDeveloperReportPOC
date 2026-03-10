@@ -17,7 +17,7 @@ from shared.database import (
 logger = logging.getLogger(__name__)
 
 COLUMNS = [
-    "id", "question_id", "question_text", "question_order",
+    "id", "question_id", "topic", "question_text", "question_order",
     "is_active", "created_at", "updated_at",
 ]
 
@@ -28,13 +28,14 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
         filters = {
             "isActive": req.params.get("isActive"),
+            "topic": req.params.get("topic"),
             "question_search": req.params.get("search"),
         }
 
         where_clause, params = build_where_clause(filters)
 
         query = f"""
-            SELECT id, question_id, question_text, question_order,
+            SELECT id, question_id, topic, question_text, question_order,
                    is_active, created_at, updated_at
             FROM dbo.questions
             WHERE {where_clause}

@@ -22,6 +22,7 @@ const useStyles = makeStyles({
     flexDirection: "column",
     height: "100vh",
     overflow: "hidden",
+    backgroundColor: '#f0f4fa',
   },
   content: {
     display: "flex",

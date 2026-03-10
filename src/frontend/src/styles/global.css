@@ -1,3 +1,9 @@
+/* =============================================================================
+ * Partner Developer Report - Global Styles
+ * Using Fluent 2 Design System tokens
+ * ============================================================================= */
+
+/* Reset and base styles */
 *,
 *::before,
 *::after {
@@ -6,16 +12,52 @@
   padding: 0;
 }
 
-html,
-body,
-#root {
-  height: 100%;
-  font-family: var(--fontFamilyBase);
-  background-color: var(--colorNeutralBackground1);
-  color: var(--colorNeutralForeground1);
+html {
+  font-family: 'Segoe UI Variable', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  min-height: 100vh;
 }
 
 #root {
   display: flex;
   flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Focus visible styles for accessibility */
+:focus-visible {
+  outline: 2px solid var(--colorBrandStroke1);
+  outline-offset: 2px;
+}
+
+/* Remove default focus for mouse users */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Smooth scrolling */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

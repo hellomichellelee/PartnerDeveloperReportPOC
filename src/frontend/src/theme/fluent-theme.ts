@@ -5,22 +5,22 @@ import {
 } from "@fluentui/react-components";
 
 const brandColors: BrandVariants = {
-  10: "#020305",
-  20: "#111723",
-  30: "#16263D",
-  40: "#193253",
-  50: "#1B3F6A",
-  60: "#1B4C82",
-  70: "#18599B",
-  80: "#1267B4",
-  90: "#3174C2",
-  100: "#4F82C8",
-  110: "#6790CF",
-  120: "#7D9ED5",
-  130: "#92ACDC",
-  140: "#A6BBE2",
-  150: "#BAC9E9",
-  160: "#CDD8EF",
+  10: '#001F3F',
+  20: '#002E5C',
+  30: '#003D7A',
+  40: '#004C99',
+  50: '#005BB8',
+  60: '#006AD6',
+  70: '#0078D4',
+  80: '#2899F5',
+  90: '#5CB1F7',
+  100: '#8FC9F9',
+  110: '#B4DBFB',
+  120: '#D4EBFD',
+  130: '#E8F4FE',
+  140: '#F5FAFF',
+  150: '#FAFCFF',
+  160: '#FFFFFF',
 };
 
 export const lightTheme = createLightTheme(brandColors);

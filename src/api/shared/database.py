@@ -115,6 +115,9 @@ def build_where_clause(filters: dict) -> tuple[str, list]:
         elif key == "isActive":
             conditions.append("is_active = %s")
             params.append(1 if value.lower() in ("true", "1", "yes") else 0)
+        elif key == "topic":
+            conditions.append("topic = %s")
+            params.append(value)
 
     where_str = " AND ".join(conditions) if conditions else "1=1"
     return where_str, params

@@ -23,6 +23,7 @@ export interface SurveyResponse {
   id: number;
   participant_id: number | null;
   submission_id: string;
+  topic: string;
   question_id: string;
   question_text: string;
   response_text: string;
@@ -49,6 +50,7 @@ export interface Question {
   [key: string]: unknown;
   id: number;
   question_id: string;
+  topic: string;
   question_text: string;
   question_order: number;
   is_active: number;
@@ -61,6 +63,7 @@ export interface Question {
 export interface ResponseFilters {
   participantId?: string;
   questionId?: string;
+  topic?: string;
   startDate?: string;
   endDate?: string;
   search?: string;
@@ -74,6 +77,7 @@ export interface ParticipantFilters {
 
 export interface QuestionFilters {
   isActive?: string;
+  topic?: string;
   search?: string;
 }
 

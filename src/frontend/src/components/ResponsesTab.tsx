@@ -76,6 +76,7 @@ export const ResponsesTab: FC = () => {
   const columns: ColumnDef<SurveyResponse>[] = useMemo(
     () => [
       { key: "participant_id", label: "Participant ID", sortable: true, minWidth: "100px", maxWidth: "140px" },
+      { key: "topic", label: "Topic", sortable: true, minWidth: "100px", maxWidth: "140px" },
       { key: "question_id", label: "Question", sortable: true, minWidth: "80px", maxWidth: "100px" },
       {
         key: "response_text",
@@ -110,6 +111,13 @@ export const ResponsesTab: FC = () => {
     [filters, setFilters]
   );
 
+  const handleTopicFilter = useCallback(
+    (_e: unknown, data: { value: string }) => {
+      setFilters({ ...filters, topic: data.value || undefined });
+    },
+    [filters, setFilters]
+  );
+
   const handleParticipantFilter = useCallback(
     (_e: unknown, data: { value: string }) => {
       setFilters({ ...filters, participantId: data.value || undefined });
@@ -127,15 +135,52 @@ export const ResponsesTab: FC = () => {
         <div className={styles.filterRow}>
           <Select
             size="medium"
+            value={filters.topic || ""}
+            onChange={handleTopicFilter}
+          >
+            <option value="">All Topics</option>
+            <option value="Context">Context</option>
+            <option value="Onboarding">Onboarding</option>
+            <option value="Development">Development</option>
+            <option value="Integration">Integration</option>
+            <option value="Testing">Testing</option>
+            <option value="Publishing">Publishing</option>
+            <option value="Wrap-Up">Wrap-Up</option>
+          </Select>
+          <Select
+            size="medium"
             value={filters.questionId || ""}
             onChange={handleQuestionFilter}
           >
             <option value="">All Questions</option>
-            <option value="q1">Q1</option>
-            <option value="q2">Q2</option>
-            <option value="q3">Q3</option>
-            <option value="q4">Q4</option>
-            <option value="q5">Q5</option>
+            <option value="ctx-1">ctx-1</option>
+            <option value="ctx-2">ctx-2</option>
+            <option value="ctx-3">ctx-3</option>
+            <option value="onb-1">onb-1</option>
+            <option value="onb-2">onb-2</option>
+            <option value="onb-3">onb-3</option>
+            <option value="onb-4">onb-4</option>
+            <option value="dev-1">dev-1</option>
+            <option value="dev-2">dev-2</option>
+            <option value="dev-3">dev-3</option>
+            <option value="dev-4">dev-4</option>
+            <option value="int-1">int-1</option>
+            <option value="int-2">int-2</option>
+            <option value="int-3">int-3</option>
+            <option value="int-4">int-4</option>
+            <option value="test-1">test-1</option>
+            <option value="test-2">test-2</option>
+            <option value="test-3">test-3</option>
+            <option value="test-4">test-4</option>
+            <option value="pub-1">pub-1</option>
+            <option value="pub-2">pub-2</option>
+            <option value="pub-3">pub-3</option>
+            <option value="pub-4">pub-4</option>
+            <option value="wrap-1">wrap-1</option>
+            <option value="wrap-2">wrap-2</option>
+            <option value="wrap-3">wrap-3</option>
+            <option value="wrap-4">wrap-4</option>
+            <option value="wrap-5">wrap-5</option>
           </Select>
           <Select
             size="medium"
@@ -196,6 +241,12 @@ export const ResponsesTab: FC = () => {
             <DialogContent>
               {detailRow && (
                 <>
+                  <Text weight="semibold" block>
+                    Topic:
+                  </Text>
+                  <Text block style={{ marginBottom: tokens.spacingVerticalM }}>
+                    {detailRow.topic || 'N/A'}
+                  </Text>
                   <Text weight="semibold" block>
                     Question:
                   </Text>
