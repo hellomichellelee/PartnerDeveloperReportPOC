@@ -80,6 +80,7 @@ export const ParticipantsTab: FC<ParticipantsTabProps> = ({
       { key: "first_name", label: "First Name", sortable: true, minWidth: "100px" },
       { key: "last_name", label: "Last Name", sortable: true, minWidth: "100px" },
       { key: "email", label: "Email", sortable: true, minWidth: "180px" },
+      { key: "company", label: "Company", sortable: true, minWidth: "120px" },
       {
         key: "consent_given",
         label: "Consent",

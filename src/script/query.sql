@@ -31,3 +31,7 @@ FOREIGN KEY (participant_id)
 REFERENCES dbo.participants(id);
 
 SELECT* FROM dbo.responses;
+
+-- Add company column to participants table
+ALTER TABLE dbo.participants
+ADD company NVARCHAR(255) NULL;

@@ -40,6 +40,7 @@ export interface Participant {
   first_name: string;
   last_name: string;
   email: string;
+  company: string;
   consent_given: number;
   consent_timestamp: string;
   created_at: string;

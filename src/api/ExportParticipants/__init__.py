@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 COLUMNS = [
     "id", "submission_id", "first_name", "last_name",
-    "email", "consent_given", "consent_timestamp", "created_at", "updated_at",
+    "email", "company", "consent_given", "consent_timestamp", "created_at", "updated_at",
 ]
 
 
@@ -36,7 +36,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
 
         query = f"""
             SELECT id, submission_id, first_name, last_name, email,
-                   consent_given, consent_timestamp, created_at, updated_at
+                   company, consent_given, consent_timestamp, created_at, updated_at
             FROM dbo.participants
             WHERE {where_clause}
             ORDER BY created_at DESC
