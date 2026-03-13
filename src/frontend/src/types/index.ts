@@ -100,4 +100,26 @@ export interface ColumnDef<T> {
   render?: (value: T[keyof T], row: T) => ReactNode;
 }
 
+// ─── Insights ───
+
+export interface Insight {
+  [key: string]: unknown;
+  id: number;
+  theme_name: string;
+  theme_summary: string;
+  occurrence_count: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface InsightReference {
+  [key: string]: unknown;
+  id: number;
+  insight_id: number;
+  excerpt: string;
+  participant_id: number;
+  submission_id: string;
+  created_at: string;
+}
+
 

@@ -7,6 +7,8 @@ import type {
   SurveyResponse,
   Participant,
   Question,
+  Insight,
+  InsightReference,
   ResponseFilters,
   ParticipantFilters,
   QuestionFilters,
@@ -98,6 +100,27 @@ export async function getQuestions(
 export function getQuestionsExportUrl(filters: QuestionFilters, format: "csv" | "xlsx"): string {
   const qs = buildQueryString({ ...filters, format });
   return `${API_BASE}/questions/export${qs}`;
+}
+
+// ─── Insights ───
+
+export async function getInsights(): Promise<{ data: Insight[] }> {
+  return fetchJson(`${API_BASE}/insights`);
+}
+
+export async function getInsightReferences(
+  insightId: number,
+  page: number,
+  pageSize: number,
+  sort: SortState
+): Promise<PaginatedResponse<InsightReference>> {
+  const qs = buildQueryString({
+    page,
+    pageSize,
+    sortBy: sort.sortBy,
+    sortOrder: sort.sortOrder,
+  });
+  return fetchJson(`${API_BASE}/insights/${insightId}/references${qs}`);
 }
 
 // ─── Health ───

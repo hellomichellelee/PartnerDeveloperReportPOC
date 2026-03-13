@@ -11,9 +11,10 @@ import {
   DocumentText20Regular,
   People20Regular,
   QuestionCircle20Regular,
+  Lightbulb20Regular,
 } from "@fluentui/react-icons";
 import { lightTheme } from "./theme";
-import { Header, ResponsesTab, ParticipantsTab, QuestionsTab } from "./components";
+import { Header, ResponsesTab, ParticipantsTab, QuestionsTab, InsightsTab } from "./components";
 import { PasswordGate, isSessionAuthenticated } from "./components/PasswordGate";
 
 const useStyles = makeStyles({
@@ -45,7 +46,7 @@ const useStyles = makeStyles({
   },
 });
 
-type TabId = "responses" | "participants" | "questions";
+type TabId = "responses" | "participants" | "questions" | "insights";
 
 const App: FC = () => {
   const styles = useStyles();
@@ -118,6 +119,12 @@ const App: FC = () => {
             >
               Questions
             </Tab>
+            <Tab
+              value="insights"
+              icon={<Lightbulb20Regular />}
+            >
+              Insights
+            </Tab>
           </TabList>
 
           <div className={styles.tabContent}>
@@ -134,6 +141,7 @@ const App: FC = () => {
             {activeTab === "questions" && (
               <QuestionsTab onViewResponses={handleViewQuestionResponses} />
             )}
+            {activeTab === "insights" && <InsightsTab />}
           </div>
         </div>
       </div>

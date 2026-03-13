@@ -6,3 +6,4 @@ export { PasswordGate, isSessionAuthenticated } from "./PasswordGate";
 export { ResponsesTab } from "./ResponsesTab";
 export { ParticipantsTab } from "./ParticipantsTab";
 export { QuestionsTab } from "./QuestionsTab";
+export { InsightsTab } from "./InsightsTab";
