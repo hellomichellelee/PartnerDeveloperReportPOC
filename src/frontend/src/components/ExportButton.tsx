@@ -35,7 +35,7 @@ export const ExportButton: FC<ExportButtonProps> = ({
         {(triggerProps) => (
           <SplitButton
             className={styles.button}
-            appearance="outline"
+            appearance="secondary"
             icon={<ArrowDownload20Regular />}
             menuButton={triggerProps}
             primaryActionButton={{ onClick: onExportCsv }}

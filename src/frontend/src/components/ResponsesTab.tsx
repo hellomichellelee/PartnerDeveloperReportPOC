@@ -75,22 +75,21 @@ export const ResponsesTab: FC = () => {
 
   const columns: ColumnDef<SurveyResponse>[] = useMemo(
     () => [
-      { key: "participant_id", label: "Participant ID", sortable: true, minWidth: "100px", maxWidth: "140px" },
-      { key: "topic", label: "Topic", sortable: true, minWidth: "100px", maxWidth: "140px" },
-      { key: "question_id", label: "Question", sortable: true, minWidth: "80px", maxWidth: "100px" },
+      { key: "participant_id", label: "Participant ID", sortable: true, minWidth: "80px", maxWidth: "110px" },
+      { key: "topic", label: "Topic", sortable: true, minWidth: "80px", maxWidth: "110px" },
+      { key: "question_id", label: "Question", sortable: true, minWidth: "70px", maxWidth: "90px" },
       {
         key: "response_text",
         label: "Response",
         sortable: false,
-        minWidth: "200px",
-        maxWidth: "400px",
+        minWidth: "400px",
       },
       {
         key: "created_at",
         label: "Created",
         sortable: true,
-        minWidth: "140px",
-        maxWidth: "180px",
+        minWidth: "120px",
+        maxWidth: "150px",
         render: (val) => new Date(String(val)).toLocaleString(),
       },
     ],

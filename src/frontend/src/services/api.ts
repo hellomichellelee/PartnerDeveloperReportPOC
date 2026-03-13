@@ -123,6 +123,17 @@ export async function getInsightReferences(
   return fetchJson(`${API_BASE}/insights/${insightId}/references${qs}`);
 }
 
+// ─── Refresh Insights ───
+
+export async function refreshInsights(): Promise<{ status: string; message: string }> {
+  const response = await fetch(`${API_BASE}/insights/refresh`, { method: "POST" });
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(`API error ${response.status}: ${text}`);
+  }
+  return response.json();
+}
+
 // ─── Health ───
 
 export async function getHealth(): Promise<{ status: string; database: string }> {

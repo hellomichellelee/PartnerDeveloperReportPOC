@@ -33,6 +33,7 @@ const useStyles = makeStyles({
     flex: 1,
     border: `1px solid ${tokens.colorNeutralStroke2}`,
     borderRadius: tokens.borderRadiusMedium,
+    backgroundColor: tokens.colorNeutralBackground1,
   },
   table: {
     minWidth: "800px",

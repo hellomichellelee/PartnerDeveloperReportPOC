@@ -46,13 +46,18 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
         """
         total_records = execute_count(count_query, (insight_id,))
 
-        # Fetch page with join to responses for created_at
+        # Fetch page — use OUTER APPLY TOP 1 to avoid row duplication
+        # when a submission_id matches multiple responses
         offset = (page - 1) * page_size
         data_query = f"""
             SELECT ir.id, ir.insight_id, ir.excerpt, ir.participant_id,
                    ir.submission_id, r.created_at
             FROM dbo.insight_references ir
-            LEFT JOIN dbo.responses r ON ir.submission_id = r.submission_id
+            OUTER APPLY (
+                SELECT TOP 1 resp.created_at
+                FROM dbo.responses resp
+                WHERE resp.submission_id = ir.submission_id
+            ) r
             WHERE ir.insight_id = %s
             ORDER BY {sort_by} {sort_order}
             OFFSET %s ROWS FETCH NEXT %s ROWS ONLY

@@ -12,11 +12,17 @@ import {
   Title3,
   Body1,
   Caption1,
+  Dialog,
+  DialogSurface,
+  DialogBody,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
 } from "@fluentui/react-components";
-import { ArrowLeft20Regular } from "@fluentui/react-icons";
+import { ArrowLeft20Regular, ArrowSync20Regular, Dismiss24Regular } from "@fluentui/react-icons";
 import { DataTable } from "./DataTable";
 import { useDataFetch } from "../hooks/useDataFetch";
-import { getInsights, getInsightReferences } from "../services/api";
+import { getInsights, getInsightReferences, refreshInsights } from "../services/api";
 import type {
   Insight,
   InsightReference,
@@ -46,10 +52,18 @@ const useStyles = makeStyles({
     flexDirection: "column",
     justifyContent: "space-between",
     minHeight: "180px",
+    maxHeight: "270px",
   },
   cardBody: {
-    padding: `0 ${tokens.spacingHorizontalM}`,
+    padding: 0,
     flex: 1,
+    overflow: "hidden",
+  },
+  refreshBar: {
+    display: "flex",
+    alignItems: "center",
+    gap: tokens.spacingHorizontalS,
+    flexShrink: 0,
   },
   centered: {
     display: "flex",
@@ -57,15 +71,20 @@ const useStyles = makeStyles({
     justifyContent: "center",
     padding: tokens.spacingVerticalXXL,
   },
-  detailHeader: {
+  detailHeaderRow: {
     display: "flex",
-    flexDirection: "column",
-    gap: tokens.spacingVerticalXS,
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: tokens.spacingHorizontalM,
+  },
+  detailSubheader: {
     paddingBottom: tokens.spacingVerticalM,
   },
-  backButton: {
-    alignSelf: "flex-start",
-    marginBottom: tokens.spacingVerticalS,
+  dialogContent: {
+    whiteSpace: "pre-wrap",
+    wordBreak: "break-word",
+    maxHeight: "60vh",
+    overflow: "auto",
   },
 });
 
@@ -82,28 +101,48 @@ export const InsightsTab: FC = () => {
   // ─── Drill-down state ───
   const [selectedInsight, setSelectedInsight] = useState<Insight | null>(null);
 
+  // ─── Refresh state ───
+  const [refreshing, setRefreshing] = useState(false);
+  const [refreshError, setRefreshError] = useState<string | null>(null);
+
+  // ─── Reference detail modal state ───
+  const [detailRef, setDetailRef] = useState<InsightReference | null>(null);
+
   // Fetch all insight cards
-  useEffect(() => {
-    let cancelled = false;
+  const loadInsights = useCallback(() => {
     setLoadingCards(true);
     setCardsError(null);
 
     getInsights()
       .then((result) => {
-        if (!cancelled) setInsights(result.data);
+        setInsights(result.data);
       })
       .catch((err) => {
-        if (!cancelled)
-          setCardsError(err.message || "Failed to load insights");
+        setCardsError(err.message || "Failed to load insights");
       })
       .finally(() => {
-        if (!cancelled) setLoadingCards(false);
+        setLoadingCards(false);
       });
-
-    return () => {
-      cancelled = true;
-    };
   }, []);
+
+  useEffect(() => {
+    loadInsights();
+  }, [loadInsights]);
+
+  // Handle refresh button click
+  const handleRefresh = useCallback(async () => {
+    setRefreshing(true);
+    setRefreshError(null);
+    try {
+      await refreshInsights();
+      loadInsights();
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Failed to refresh insights";
+      setRefreshError(message);
+    } finally {
+      setRefreshing(false);
+    }
+  }, [loadInsights]);
 
   // ─── References data fetch (driven by selectedInsight) ───
   const fetchReferencesFn = useCallback(
@@ -150,21 +189,21 @@ export const InsightsTab: FC = () => {
         key: "excerpt",
         label: "Excerpt",
         sortable: false,
-        minWidth: "300px",
+        minWidth: "500px",
       },
       {
         key: "participant_id",
         label: "Participant ID",
         sortable: true,
-        minWidth: "120px",
-        maxWidth: "160px",
+        minWidth: "80px",
+        maxWidth: "110px",
       },
       {
         key: "created_at",
         label: "Created",
         sortable: true,
-        minWidth: "140px",
-        maxWidth: "180px",
+        minWidth: "110px",
+        maxWidth: "150px",
         render: (val) =>
           val ? new Date(String(val)).toLocaleString() : "—",
       },
@@ -208,6 +247,21 @@ export const InsightsTab: FC = () => {
 
     return (
       <div className={styles.container}>
+        <div className={styles.refreshBar}>
+          <Button
+            appearance="subtle"
+            icon={refreshing ? <Spinner size="tiny" /> : <ArrowSync20Regular />}
+            disabled={refreshing}
+            onClick={handleRefresh}
+          >
+            {refreshing ? "Refreshing…" : "Refresh"}
+          </Button>
+          {refreshError && (
+            <Text size={200} style={{ color: tokens.colorPaletteRedForeground1 }}>
+              {refreshError}
+            </Text>
+          )}
+        </div>
         <div className={styles.cardsGrid}>
           {insights.map((insight) => (
             <Card key={insight.id} className={styles.card} size="large">
@@ -233,17 +287,17 @@ export const InsightsTab: FC = () => {
   // ─── References Detail View ───
   return (
     <div className={styles.container}>
-      <Button
-        className={styles.backButton}
-        appearance="subtle"
-        icon={<ArrowLeft20Regular />}
-        onClick={handleBackToCards}
-      >
-        Back to Insights
-      </Button>
-
-      <div className={styles.detailHeader}>
+      <div className={styles.detailHeaderRow}>
         <Title3>{selectedInsight.theme_name}</Title3>
+        <Button
+          appearance="subtle"
+          icon={<ArrowLeft20Regular />}
+          onClick={handleBackToCards}
+        >
+          Back to Insights
+        </Button>
+      </div>
+      <div className={styles.detailSubheader}>
         <Caption1>{selectedInsight.theme_summary}</Caption1>
       </div>
 
@@ -257,7 +311,60 @@ export const InsightsTab: FC = () => {
         onSortChange={setRefSort}
         onPageChange={setRefPage}
         onPageSizeChange={setRefPageSize}
+        onRowClick={setDetailRef}
       />
+
+      {/* Reference Detail Dialog */}
+      <Dialog
+        open={detailRef !== null}
+        onOpenChange={(_e, data) => {
+          if (!data.open) setDetailRef(null);
+        }}
+      >
+        <DialogSurface>
+          <DialogBody>
+            <DialogTitle
+              action={
+                <Button
+                  appearance="subtle"
+                  icon={<Dismiss24Regular />}
+                  onClick={() => setDetailRef(null)}
+                />
+              }
+            >
+              Reference Detail
+            </DialogTitle>
+            <DialogContent>
+              {detailRef && (
+                <>
+                  <Text weight="semibold" block>
+                    Excerpt:
+                  </Text>
+                  <div className={styles.dialogContent}>
+                    {detailRef.excerpt}
+                  </div>
+                  <Text
+                    size={200}
+                    style={{
+                      color: tokens.colorNeutralForeground3,
+                      marginTop: tokens.spacingVerticalM,
+                      display: "block",
+                    }}
+                  >
+                    Participant: {detailRef.participant_id ?? "N/A"} | Created:{" "}
+                    {new Date(detailRef.created_at).toLocaleString()}
+                  </Text>
+                </>
+              )}
+            </DialogContent>
+            <DialogActions>
+              <Button appearance="secondary" onClick={() => setDetailRef(null)}>
+                Close
+              </Button>
+            </DialogActions>
+          </DialogBody>
+        </DialogSurface>
+      </Dialog>
     </div>
   );
 };
