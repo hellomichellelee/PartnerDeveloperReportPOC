@@ -1,9 +1,18 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import type { FC } from "react";
 import {
   makeStyles,
   tokens,
+  Dialog,
+  DialogSurface,
+  DialogBody,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  Text,
 } from "@fluentui/react-components";
+import { Dismiss24Regular } from "@fluentui/react-icons";
 import { DataTable } from "./DataTable";
 import { FilterToolbar } from "./FilterToolbar";
 import { ExportButton } from "./ExportButton";
@@ -26,17 +35,18 @@ const useStyles = makeStyles({
     gap: tokens.spacingHorizontalS,
     flexWrap: "wrap",
   },
+  dialogContent: {
+    whiteSpace: "pre-wrap",
+    wordBreak: "break-word",
+    maxHeight: "60vh",
+    overflow: "auto",
+  },
 });
 
-interface ParticipantsTabProps {
-  onViewResponses?: (submissionId: string) => void;
-}
-
-export const ParticipantsTab: FC<ParticipantsTabProps> = ({
-  onViewResponses,
-}) => {
+export const ParticipantsTab: FC = () => {
   const styles = useStyles();
   const { triggerExport } = useExport();
+  const [detailRow, setDetailRow] = useState<Participant | null>(null);
 
   const fetchFn = useCallback(
     (
@@ -59,7 +69,6 @@ export const ParticipantsTab: FC<ParticipantsTabProps> = ({
     setPage,
     setPageSize,
     setFilters,
-    refresh,
   } = useDataFetch<Participant, ParticipantFilters>({
     fetchFn,
     defaultSort: { sortBy: "created_at", sortOrder: "desc" },
@@ -118,11 +127,9 @@ export const ParticipantsTab: FC<ParticipantsTabProps> = ({
 
   const handleRowClick = useCallback(
     (row: Participant) => {
-      if (onViewResponses) {
-        onViewResponses(row.submission_id);
-      }
+      setDetailRow(row);
     },
-    [onViewResponses]
+    []
   );
 
   return (
@@ -130,7 +137,6 @@ export const ParticipantsTab: FC<ParticipantsTabProps> = ({
       <FilterToolbar
         searchValue={filters.search || ""}
         onSearchChange={handleSearchChange}
-        onRefresh={refresh}
       >
         <div className={styles.filterRow}>
           <ExportButton
@@ -154,8 +160,76 @@ export const ParticipantsTab: FC<ParticipantsTabProps> = ({
         onSortChange={setSort}
         onPageChange={setPage}
         onPageSizeChange={setPageSize}
-        onRowClick={onViewResponses ? handleRowClick : undefined}
+        onRowClick={handleRowClick}
       />
+
+      {/* Detail Dialog */}
+      <Dialog
+        open={detailRow !== null}
+        onOpenChange={(_e, data) => {
+          if (!data.open) setDetailRow(null);
+        }}
+      >
+        <DialogSurface>
+          <DialogBody>
+            <DialogTitle
+              action={
+                <Button
+                  appearance="subtle"
+                  icon={<Dismiss24Regular />}
+                  onClick={() => setDetailRow(null)}
+                />
+              }
+            >
+              Participant Detail — ID {detailRow?.id}
+            </DialogTitle>
+            <DialogContent>
+              {detailRow && (
+                <div className={styles.dialogContent}>
+                  <Text weight="semibold" block>Submission ID:</Text>
+                  <Text block style={{ marginBottom: tokens.spacingVerticalM }}>
+                    {detailRow.submission_id}
+                  </Text>
+                  <Text weight="semibold" block>Name:</Text>
+                  <Text block style={{ marginBottom: tokens.spacingVerticalM }}>
+                    {detailRow.first_name} {detailRow.last_name}
+                  </Text>
+                  <Text weight="semibold" block>Email:</Text>
+                  <Text block style={{ marginBottom: tokens.spacingVerticalM }}>
+                    {detailRow.email}
+                  </Text>
+                  <Text weight="semibold" block>Company:</Text>
+                  <Text block style={{ marginBottom: tokens.spacingVerticalM }}>
+                    {detailRow.company}
+                  </Text>
+                  <Text weight="semibold" block>Consent:</Text>
+                  <Text block style={{ marginBottom: tokens.spacingVerticalM }}>
+                    {Number(detailRow.consent_given) === 1 ? "Yes" : "No"}
+                    {detailRow.consent_timestamp
+                      ? ` — ${new Date(detailRow.consent_timestamp).toLocaleString()}`
+                      : ""}
+                  </Text>
+                  <Text
+                    size={200}
+                    style={{
+                      color: tokens.colorNeutralForeground3,
+                      marginTop: tokens.spacingVerticalM,
+                      display: "block",
+                    }}
+                  >
+                    Created: {new Date(detailRow.created_at).toLocaleString()}
+                  </Text>
+                </div>
+              )}
+            </DialogContent>
+            <DialogActions>
+              <Button appearance="secondary" onClick={() => setDetailRow(null)}>
+                Close
+              </Button>
+            </DialogActions>
+          </DialogBody>
+        </DialogSurface>
+      </Dialog>
     </div>
   );
 };

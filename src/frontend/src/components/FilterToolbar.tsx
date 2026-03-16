@@ -29,7 +29,7 @@ const useStyles = makeStyles({
 interface FilterToolbarProps {
   searchValue: string;
   onSearchChange: (value: string) => void;
-  onRefresh: () => void;
+  onRefresh?: () => void;
   children?: ReactNode; // Additional filter controls
 }
 
@@ -84,14 +84,16 @@ export const FilterToolbar: FC<FilterToolbarProps> = ({
         Search
       </Button>
       {children}
-      <Button
-        appearance="subtle"
-        icon={<ArrowClockwise20Regular />}
-        onClick={onRefresh}
-        aria-label="Refresh data"
-      >
-        Refresh
-      </Button>
+      {onRefresh && (
+        <Button
+          appearance="subtle"
+          icon={<ArrowClockwise20Regular />}
+          onClick={onRefresh}
+          aria-label="Refresh data"
+        >
+          Refresh
+        </Button>
+      )}
     </div>
   );
 };

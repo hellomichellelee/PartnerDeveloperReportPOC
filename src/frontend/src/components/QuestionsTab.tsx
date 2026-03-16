@@ -1,11 +1,20 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import type { FC } from "react";
 import {
   makeStyles,
   tokens,
   Select,
   Badge,
+  Dialog,
+  DialogSurface,
+  DialogBody,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  Text,
 } from "@fluentui/react-components";
+import { Dismiss24Regular } from "@fluentui/react-icons";
 import { DataTable } from "./DataTable";
 import { FilterToolbar } from "./FilterToolbar";
 import { ExportButton } from "./ExportButton";
@@ -28,17 +37,18 @@ const useStyles = makeStyles({
     gap: tokens.spacingHorizontalS,
     flexWrap: "wrap",
   },
+  dialogContent: {
+    whiteSpace: "pre-wrap",
+    wordBreak: "break-word",
+    maxHeight: "60vh",
+    overflow: "auto",
+  },
 });
 
-interface QuestionsTabProps {
-  onViewResponses?: (questionId: string) => void;
-}
-
-export const QuestionsTab: FC<QuestionsTabProps> = ({
-  onViewResponses,
-}) => {
+export const QuestionsTab: FC = () => {
   const styles = useStyles();
   const { triggerExport } = useExport();
+  const [detailRow, setDetailRow] = useState<Question | null>(null);
 
   // Questions API doesn't paginate, but we wrap it to match the hook interface
   const fetchFn = useCallback(
@@ -62,7 +72,6 @@ export const QuestionsTab: FC<QuestionsTabProps> = ({
     setPage,
     setPageSize,
     setFilters,
-    refresh,
   } = useDataFetch<Question, QuestionFilters>({
     fetchFn,
     defaultSort: { sortBy: "question_order", sortOrder: "asc" },
@@ -127,11 +136,9 @@ export const QuestionsTab: FC<QuestionsTabProps> = ({
 
   const handleRowClick = useCallback(
     (row: Question) => {
-      if (onViewResponses) {
-        onViewResponses(row.question_id);
-      }
+      setDetailRow(row);
     },
-    [onViewResponses]
+    []
   );
 
   return (
@@ -139,7 +146,6 @@ export const QuestionsTab: FC<QuestionsTabProps> = ({
       <FilterToolbar
         searchValue={filters.search || ""}
         onSearchChange={handleSearchChange}
-        onRefresh={refresh}
       >
         <div className={styles.filterRow}>
           <Select
@@ -186,8 +192,73 @@ export const QuestionsTab: FC<QuestionsTabProps> = ({
         onSortChange={setSort}
         onPageChange={setPage}
         onPageSizeChange={setPageSize}
-        onRowClick={onViewResponses ? handleRowClick : undefined}
+        onRowClick={handleRowClick}
       />
+
+      {/* Detail Dialog */}
+      <Dialog
+        open={detailRow !== null}
+        onOpenChange={(_e, data) => {
+          if (!data.open) setDetailRow(null);
+        }}
+      >
+        <DialogSurface>
+          <DialogBody>
+            <DialogTitle
+              action={
+                <Button
+                  appearance="subtle"
+                  icon={<Dismiss24Regular />}
+                  onClick={() => setDetailRow(null)}
+                />
+              }
+            >
+              Question Detail — {detailRow?.question_id}
+            </DialogTitle>
+            <DialogContent>
+              {detailRow && (
+                <div className={styles.dialogContent}>
+                  <Text weight="semibold" block>Question ID:</Text>
+                  <Text block style={{ marginBottom: tokens.spacingVerticalM }}>
+                    {detailRow.question_id}
+                  </Text>
+                  <Text weight="semibold" block>Topic:</Text>
+                  <Text block style={{ marginBottom: tokens.spacingVerticalM }}>
+                    {detailRow.topic}
+                  </Text>
+                  <Text weight="semibold" block>Question Text:</Text>
+                  <Text block style={{ marginBottom: tokens.spacingVerticalM }}>
+                    {detailRow.question_text}
+                  </Text>
+                  <Text weight="semibold" block>Order:</Text>
+                  <Text block style={{ marginBottom: tokens.spacingVerticalM }}>
+                    {detailRow.question_order}
+                  </Text>
+                  <Text weight="semibold" block>Status:</Text>
+                  <Text block style={{ marginBottom: tokens.spacingVerticalM }}>
+                    {Number(detailRow.is_active) === 1 ? "Active" : "Inactive"}
+                  </Text>
+                  <Text
+                    size={200}
+                    style={{
+                      color: tokens.colorNeutralForeground3,
+                      marginTop: tokens.spacingVerticalM,
+                      display: "block",
+                    }}
+                  >
+                    Created: {new Date(detailRow.created_at).toLocaleString()}
+                  </Text>
+                </div>
+              )}
+            </DialogContent>
+            <DialogActions>
+              <Button appearance="secondary" onClick={() => setDetailRow(null)}>
+                Close
+              </Button>
+            </DialogActions>
+          </DialogBody>
+        </DialogSurface>
+      </Dialog>
     </div>
   );
 };

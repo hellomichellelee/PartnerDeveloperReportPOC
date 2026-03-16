@@ -129,7 +129,6 @@ export const ResponsesTab: FC = () => {
       <FilterToolbar
         searchValue={filters.search || ""}
         onSearchChange={handleSearchChange}
-        onRefresh={refresh}
       >
         <div className={styles.filterRow}>
           <Select

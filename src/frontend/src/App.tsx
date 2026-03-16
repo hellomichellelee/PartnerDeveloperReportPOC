@@ -52,37 +52,12 @@ const App: FC = () => {
   const styles = useStyles();
   const [authenticated, setAuthenticated] = useState(isSessionAuthenticated());
   const [activeTab, setActiveTab] = useState<TabId>("responses");
-  const [responseSubmissionFilter, setResponseSubmissionFilter] = useState<
-    string | undefined
-  >();
-  const [responseQuestionFilter, setResponseQuestionFilter] = useState<
-    string | undefined
-  >();
-
-  const handleViewParticipantResponses = useCallback(
-    (submissionId: string) => {
-      setResponseSubmissionFilter(submissionId);
-      setResponseQuestionFilter(undefined);
-      setActiveTab("responses");
-    },
-    []
-  );
-
-  const handleViewQuestionResponses = useCallback((questionId: string) => {
-    setResponseQuestionFilter(questionId);
-    setResponseSubmissionFilter(undefined);
-    setActiveTab("responses");
-  }, []);
 
   const handleTabChange = useCallback(
     (_: unknown, data: { value: string | unknown }) => {
       const tab = data.value as TabId;
       setActiveTab(tab);
-      // Clear cross-tab filters when manually switching tabs
-      if (tab !== "responses") {
-        setResponseSubmissionFilter(undefined);
-        setResponseQuestionFilter(undefined);
-      }
+    },
     },
     []
   );
@@ -129,17 +104,13 @@ const App: FC = () => {
 
           <div className={styles.tabContent}>
             {activeTab === "responses" && (
-              <ResponsesTab
-                key={`responses-${responseSubmissionFilter}-${responseQuestionFilter}`}
-              />
+              <ResponsesTab />
             )}
             {activeTab === "participants" && (
-              <ParticipantsTab
-                onViewResponses={handleViewParticipantResponses}
-              />
+              <ParticipantsTab />
             )}
             {activeTab === "questions" && (
-              <QuestionsTab onViewResponses={handleViewQuestionResponses} />
+              <QuestionsTab />
             )}
             {activeTab === "insights" && <InsightsTab />}
           </div>
