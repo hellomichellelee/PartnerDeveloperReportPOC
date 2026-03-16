@@ -58,7 +58,6 @@ const App: FC = () => {
       const tab = data.value as TabId;
       setActiveTab(tab);
     },
-    },
     []
   );
 

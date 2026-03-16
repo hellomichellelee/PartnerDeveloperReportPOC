@@ -14,6 +14,18 @@ export default defineConfig({
   },
   build: {
     outDir: "dist",
-    sourcemap: true,
+    sourcemap: false,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          "fluent-ui": [
+            "@fluentui/react-components",
+            "@fluentui/react-datepicker-compat",
+          ],
+          "fluent-icons": ["@fluentui/react-icons"],
+          react: ["react", "react-dom"],
+        },
+      },
+    },
   },
 });

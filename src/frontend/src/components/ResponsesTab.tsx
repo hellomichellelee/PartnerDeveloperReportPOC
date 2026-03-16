@@ -66,7 +66,6 @@ export const ResponsesTab: FC = () => {
     setPage,
     setPageSize,
     setFilters,
-    refresh,
   } = useDataFetch<SurveyResponse, ResponseFilters>({
     fetchFn,
     defaultSort: { sortBy: "created_at", sortOrder: "desc" },
